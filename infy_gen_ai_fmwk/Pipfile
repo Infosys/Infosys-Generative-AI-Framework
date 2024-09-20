@@ -1,0 +1,30 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pytest = "==6.2.5"
+pytest-cov = "==2.12.1"
+autopep8 = "==1.5.1"
+
+[packages]
+#Below package are for audio_to_text_service
+soundfile= "==0.12.1"
+librosa= "==0.10.0.post2"
+torch= "==2.0.0"
+transformers= "==4.27.1"
+python-dotenv= "==1.0.0"
+openai= "==0.27.1"
+pydantic= "==1.10.7"
+numpy=   "==1.23.5"
+#No packages are install for code_translate_service
+
+#Below packages are for summarize_service
+PyPDF2= "==3.0.1"
+spacy="==3.7.2"
+pandas="==1.5.3"
+openpyxl="==3.1.2"
+ 
+[requires]
+python_version = "3.10"
