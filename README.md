@@ -22,7 +22,7 @@ S# | API	| Description |
 3 | single code documentation | This API is used for generating documentation for a given source code file. It uses the OpenAI API to generate the documentation based on the content of the source code.
 4 | unit test generation | This API is used for automatically generating unit tests for a given source code file. It uses the OpenAI API to generate the tests based on the content of the source code.
 5 | multiple code documentation |  This API is used for generating documentation for multiple source code files at once. It uses the OpenAI API to generate the documentation based on the content of each source code file.
-6 | summarise PDF document | This API is used for summarizing the content of PDF files. It uses the OpenAI API to generate the summary based on the content of the PDF.
+6 | summarize PDF document | This API is used for summarizing the content of PDF files. It uses the OpenAI API to generate the summary based on the content of the PDF.
 7 | generate insights | This API is used for generating insights from given data. It uses the OpenAI API to generate the insights based on the content of the data.
 8 | generate metadata and description | This API is used for generating meta descriptions from a text file. It uses the OpenAI API to generate the meta descriptions based on the content of the text file.
 
@@ -36,7 +36,7 @@ Step | API | Input | Output
 3 | single code documentation  | `source code file path`, `language` | `documentation of the code`
 4 | unit test generation  | `source code file path`, `language` | `generated test cases`
 5 | multiple code documentation |`source code file paths`, `language`  | `documentation of multiple files` 
-6 | summarise PDF document| `pdf file path`, `summarization type` | `summary of the pdf file`
+6 | summarize PDF document| `pdf file path`, `summarization type` | `summary of the pdf file`
 7 | generate insights| `csv or xlsx file path`, `number of completions`  | `summary of the file`
 8 | generate metadata and description| `text file path`, `number of completions` | `keywords`, `meta description` 
  
