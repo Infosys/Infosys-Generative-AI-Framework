@@ -164,7 +164,7 @@ if __name__ == '__main__':
 
     METADATA = dict(
         name="infy_gen_ai_fmwk",
-        version="2.0.0",
+        version="3.0.0",
         license="Infosys Proprietary",
         author="Infosys Limited",
         author_email="",

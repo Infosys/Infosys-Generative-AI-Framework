@@ -8,29 +8,32 @@
 import os
 import math
 import logging
-import traceback
 from logging.handlers import TimedRotatingFileHandler
 from infy_gen_ai_fmwk.common.file_constants import FileConstants
 from infy_gen_ai_fmwk.common.pypdf import read_pdf_from_file
 from infy_gen_ai_fmwk.common.tokenizer import Tokenizer
 from infy_gen_ai_fmwk.common.utils import Utils
 from infy_gen_ai_fmwk.data.config_data import SummarizerConfigData
-from infy_gen_ai_fmwk.data.request_data import SummarizerRequestData, SummarizerResponseData
+from infy_gen_ai_fmwk.data.request_data import SummarizerRequestData
+from infy_gen_ai_fmwk.data.response_data import SummarizerResponseData
 from infy_gen_ai_fmwk.service.provider.openai import OpenAIAPI
 from enum import Enum
+
 if not os.path.exists('logs'):
     os.makedirs('logs')
 logger = logging.getLogger('logger')
-logger.setLevel(logging.ERROR)
-handler = TimedRotatingFileHandler(
-    'logs/gen_ai_fmwk.log', when='midnight', interval=1)
-handler.setLevel(logging.DEBUG)
-formatter = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+if not logger.handlers:
+    logger.setLevel(logging.DEBUG)
+    handler = TimedRotatingFileHandler(
+        'logs/gen_ai_fmwk.log', when='midnight', interval=1)
+    handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
 
 api = OpenAIAPI()
+
 
 class SummarizationType(Enum):
     LINEAR = 'linear'
@@ -65,8 +68,7 @@ class SummarizeService:
             logger.info('Generated summary')
             return response_data
         except Exception as e:
-            logger.error('Error generating summary')
-            logger.error(traceback.format_exc())
+            logger.error(f"Exception: {str(e)}")
             raise Exception(str(e))
 
     def __to_summarize_pdf(self, file, summarization_type):
@@ -80,11 +82,9 @@ class SummarizeService:
             page_chunks = read_pdf_from_file(file)
             logger.info(
                 f'{len(page_chunks)} text chunks are generated')
-
             logger.info('Starting summarization..')
             summary = self.__to_group_and_summarize_linear(
                 ''.join(page_chunks))
-
         return summary
 
     def __to_group_and_summarize_recursive(self, text_chunks):
@@ -93,7 +93,6 @@ class SummarizeService:
             summaries = api.get_chat_completion(
                 f'Summarize the following in 5-10 sentences : \n {text_chunks[0]}', engine=llm_config.completion_model, temperature=llm_config.temperature)
             return summaries[0]
-
         summary_chunks = [api.get_chat_completion(
             f'Summarize the following in 10-15 sentences: \n {x}', engine=llm_config.completion_model, temperature=llm_config.temperature)[0] for x in text_chunks]
         group_size = int(math.floor(
@@ -113,10 +112,8 @@ class SummarizeService:
         return self.__to_group_and_summarize_recursive(new_groups)
 
     def __to_group_and_summarize_linear(self, text):
-
         group = []
         groups = []
-
         blocks = text.split("\n")
         for block in blocks:
             if len((" ").join(group).split(" ")) + len(block.split(" ")) > self.config_data.word_limit:
@@ -124,10 +121,8 @@ class SummarizeService:
                 group = [block]
             else:
                 group.append(block)
-
         if len(group) > 0:
             groups.append(group)
-
         tldrs = []
         for group in groups:
             text = ("\n").join(group)
@@ -136,5 +131,4 @@ class SummarizeService:
             tldr = api.get_chat_completion(
                 prompt, temperature=llm_config.temperature, engine=llm_config.completion_model)
             tldrs.append(tldr[0])
-
         return ' '.join(tldrs)

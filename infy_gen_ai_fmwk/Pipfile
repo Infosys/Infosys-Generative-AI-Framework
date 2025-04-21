@@ -4,12 +4,12 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-pytest = "==6.2.5"
-pytest-cov = "==2.12.1"
-autopep8 = "==1.5.1"
+pytest= "==6.2.5"
+pytest-cov= "==2.12.1"
+autopep8= "==1.5.1"
 
 [packages]
-#Below package are for audio_to_text_service
+#Below packages are for audio_to_text_service
 soundfile= "==0.12.1"
 librosa= "==0.10.0.post2"
 torch= "==2.0.0"
@@ -18,13 +18,26 @@ python-dotenv= "==1.0.0"
 openai= "==0.27.1"
 pydantic= "==1.10.7"
 numpy=   "==1.23.5"
-#No packages are install for code_translate_service
+#No packages are installed for code_service
 
 #Below packages are for summarize_service
 PyPDF2= "==3.0.1"
-spacy="==3.7.2"
-pandas="==1.5.3"
-openpyxl="==3.1.2"
- 
+spacy= "==3.7.2"
+pandas= "==1.5.3"
+openpyxl= "==3.1.2"
+
+#Below packages are for add_searchable_embeddings_service,context_retriever_servcie and answer_generator_service
+chromadb= "==0.3.21"
+huggingface_hub= "==0.25.2"
+
+#Below packages are for build_knowledge_graph_service,search_knowledge_graph_service
+matplotlib= "==3.7.1"
+
+#Below packages are for video_moment_retriever_clip_service
+humanfriendly= "==10.0"
+moviepy= "==1.0.3"
+opencv-python= "==4.7.0.72"
+
+
 [requires]
 python_version = "3.10"

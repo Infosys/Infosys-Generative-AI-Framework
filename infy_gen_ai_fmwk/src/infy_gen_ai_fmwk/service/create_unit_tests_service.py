@@ -11,19 +11,22 @@ from logging.handlers import TimedRotatingFileHandler
 from infy_gen_ai_fmwk.common.file_constants import FileConstants
 from infy_gen_ai_fmwk.common.utils import Utils
 from infy_gen_ai_fmwk.data.config_data import OpenAiLlmConfigData
-from infy_gen_ai_fmwk.data.request_data import UnitTestCreatorRequestData, UnitTestCreatorResponseData
+from infy_gen_ai_fmwk.data.request_data import UnitTestCreatorRequestData
+from infy_gen_ai_fmwk.data.response_data import UnitTestCreatorResponseData
 from infy_gen_ai_fmwk.service.provider.openai import OpenAIAPI
+
 if not os.path.exists('logs'):
     os.makedirs('logs')
 logger = logging.getLogger('logger')
-logger.setLevel(logging.ERROR)
-handler = TimedRotatingFileHandler(
-    'logs/gen_ai_fmwk.log', when='midnight', interval=1)
-handler.setLevel(logging.DEBUG)
-formatter = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+if not logger.handlers:
+    logger.setLevel(logging.DEBUG)
+    handler = TimedRotatingFileHandler(
+        'logs/gen_ai_fmwk.log', when='midnight', interval=1)
+    handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
 
 
 class CreateUnitTestsService:
@@ -47,13 +50,12 @@ class CreateUnitTestsService:
             logger.info('Generated unit tests')
             return response_data
         except Exception as e:
-            logger.error('Error generating unit tests')
+            logger.error(f"Exception: {str(e)}")
             raise Exception(str(e))
 
     def __to_generate_test_cases(self, code: str, lang: str):
         llm_config = self.config_data
         prompt = llm_config.prompt_template.format(lang=lang)
-
         prompt += f'{code}\nTest Cases:'
         api = OpenAIAPI()
         return api.get_chat_completion(prompt, temperature=llm_config.temperature, engine=llm_config.completion_model, stop=["6."])[0]

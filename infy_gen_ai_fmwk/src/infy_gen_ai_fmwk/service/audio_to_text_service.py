@@ -10,23 +10,26 @@ import io
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import soundfile as sf
-from infy_gen_ai_fmwk.data.request_data import AudioToTextRequestData, AudioToTextResponseData
+from infy_gen_ai_fmwk.data.request_data import AudioToTextRequestData
+from infy_gen_ai_fmwk.data.response_data import AudioToTextResponseData
 from infy_gen_ai_fmwk.data.config_data import AudioToTextConfigData
 from infy_gen_ai_fmwk.service.provider.openai import OpenAIAPI
 from infy_gen_ai_fmwk.common.utils import Utils
-from infy_gen_ai_fmwk.service.provider.audio_translator import AudioTranslator
+from infy_gen_ai_fmwk.service.provider.audio_transcriber import AudioTranscriber
 from infy_gen_ai_fmwk.common.file_constants import FileConstants
+
 if not os.path.exists('logs'):
     os.makedirs('logs')
 logger = logging.getLogger('logger')
-logger.setLevel(logging.ERROR)
-handler = TimedRotatingFileHandler(
-    'logs/gen_ai_fmwk.log', when='midnight', interval=1)
-handler.setLevel(logging.DEBUG)
-formatter = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+if not logger.handlers:
+    logger.setLevel(logging.DEBUG)
+    handler = TimedRotatingFileHandler(
+        'logs/gen_ai_fmwk.log', when='midnight', interval=1)
+    handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
 
 
 class AudioToTextService:
@@ -34,7 +37,7 @@ class AudioToTextService:
 
     def __init__(self, config_data: AudioToTextConfigData):
         self.config_data = config_data
-        self.audio_translator_obj = AudioTranslator(config_data)
+        self.audio_translator_obj = AudioTranscriber(config_data)
         logger.info('AudioToTextService initialized')
 
     def convert_to_text(self, request_data: AudioToTextRequestData) -> AudioToTextResponseData:
@@ -66,5 +69,5 @@ class AudioToTextService:
                 logger.info('Generated MOM')
             return response_data
         except Exception as e:
-            logger.error('Error in converting audio to text')
+            logger.error(f"Exception: {str(e)}")
             raise Exception(str(e))

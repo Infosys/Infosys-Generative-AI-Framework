@@ -13,19 +13,22 @@ from logging.handlers import TimedRotatingFileHandler
 from infy_gen_ai_fmwk.common.file_constants import FileConstants
 from infy_gen_ai_fmwk.common.utils import Utils
 from infy_gen_ai_fmwk.data.config_data import OpenAiLlmConfigData
-from infy_gen_ai_fmwk.data.request_data import InsightsGeneratorRequestData, InsightsGeneratorResponseData
+from infy_gen_ai_fmwk.data.request_data import InsightsGeneratorRequestData
+from infy_gen_ai_fmwk.data.response_data import InsightsGeneratorResponseData
 from infy_gen_ai_fmwk.service.provider.openai import OpenAIAPI
+
 if not os.path.exists('logs'):
     os.makedirs('logs')
 logger = logging.getLogger('logger')
-logger.setLevel(logging.ERROR)
-handler = TimedRotatingFileHandler(
-    'logs/gen_ai_fmwk.log', when='midnight', interval=1)
-handler.setLevel(logging.DEBUG)
-formatter = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+if not logger.handlers:
+    logger.setLevel(logging.DEBUG)
+    handler = TimedRotatingFileHandler(
+        'logs/gen_ai_fmwk.log', when='midnight', interval=1)
+    handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
 
 
 class GenerateInsights:
@@ -41,7 +44,6 @@ class GenerateInsights:
                 FileConstants.get_invalid_file_error_msg('excel_file'))
             raise ValueError(
                 FileConstants.get_invalid_file_error_msg('excel_file'))
-
         with open(request_data.file_path, 'rb') as f:
             contents = f.read()
             logger.info('Read file')
@@ -60,7 +62,7 @@ class GenerateInsights:
             logger.info('Generated insights')
             return response_data
         except Exception as e:
-            logger.error('Error generating insights')
+            logger.error(f"Exception: {str(e)}")
             raise Exception(str(e))
 
     def __to_get_content_from_dataframe(self, dataframe):
@@ -69,5 +71,4 @@ class GenerateInsights:
             for column in dataframe.columns:
                 data += f'{row[column]}|'
             data += '\n'
-
         return data

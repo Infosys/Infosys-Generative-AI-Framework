@@ -1,0 +1,3 @@
+
+class PromptTemplate:
+    GENERATE_ANSWER_PROMPT = "Use the following pieces of context to answer the question at the end.If you don't know the answer or even doubtful a bit,just say that you don't know, don't try to make up an answer.Just give the shortest and most appropriate relavant answer to the question.The output should be in a proper json format as below: start with key as 'answer' and its value and last key will be how confident are you about the answer on the scale of 1 to 100 as 'confidence_pct' here 100 means highest confidence level.This output json format should be strictly followed even when answer is not found and mandatorily contain all keys('answer') at all times in the output."
